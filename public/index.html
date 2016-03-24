@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="myapp" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes Application</title>
+
+    <link rel="icon" type="image/png" href="images/angular-icon.png">
+
+    <link rel="stylesheet" href="stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/ng-tags-input.css">
+    <link rel="stylesheet" href="stylesheets/ng-tags-input.bootstrap.css">
+    <link rel="stylesheet" href="fonts/font-awesome-4.1.0/css/font-awesome.css">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="javascripts/jquery.js"></script>
+    <script src="javascripts/angular.js"></script>
+    <script src="javascripts/angular-route.min.js"></script>
+    <script src="javascripts/ng-tags-input.js"></script>
+    <script src="javascripts/angular-drag-and-drop-lists.js"></script>
+    <script src="javascripts/notes.js"></script>
+</head>
+<body ng-controller="NotesController">
+<h2 ng-bind="opStatus.status" ng-class="opStatus.clazz"></h2>
+<br>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <div class="navbar-brand"><img src="images/angular-icon.png" style="width: 50px; height: auto;display: inline;"> <span class="lead">Notes tutorial app</span></div>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" placeholder="Username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+            </form>
+        </div>
+        <!--/.navbar-collapse -->
+    </div>
+</nav>
+
+<div class="well">
+    <div class="container">
+        <h2>
+            <span class="fa fa-edit"></span>
+            Keep your notes in order
+        </h2>
+
+        <p class="text-muted small">
+            A simple application to keep your own notes in order.
+        </p>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row ">
+        <div class="col-md-5 well">
+            <div class="form-group">
+                <label>
+                    Add note: <br>
+                    <textarea rows="10" cols="90" ng-model="text" class="form-control"></textarea>
+                </label>
+                <br>
+            </div>
+            <div class="form-group">
+                <tags-input ng-model="tags" min-length="4"></tags-input>
+            </div>
+            <div class="form-group">
+                <select ng-model="editActiveSection" ng-options="option.title for option in sections track by option.title" ng-show="showEditButton"></select>
+            </div>
+            <button ng-click="add()" class="btn btn-primary"><i class="fa fa-plus-square"></i> Add note</button>
+            <button ng-click="editNote()" ng-show="showEditButton" class="btn btn-warning"><i class="fa fa-pencil-square"></i> Edit note</button>
+            <button ng-click="cancelEdit()" ng-show="showEditButton" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</button>
+        </div>
+
+        <div class="col-md-offset-1 col-md-5">
+            <label>Sections </label><br>
+
+            <div class="form-group">
+                <div class="input-group col-md-offset-6">
+                    <span class="input-group-addon" id="basic-addon1"><i class="fa fa-fw fa-search"></i></span>
+                    <input ng-model="sectionsFilter" type="text" class="form-control" placeholder="search" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="form-group">
+                <ul class="list-group" dnd-list="sections">
+                    <li href="#"
+                        dnd-draggable="section"
+                        dnd-moved="sections.splice($index, 1); writeSections();"
+                        class="list-group-item"
+                        ng-repeat="section in sections | filter: sectionsFilter"
+                        ng-click="showSections(section)"
+                        ng-class="{active:section.title == activeSection}">{{section.title}}
+                    </li>
+                </ul>
+            </div>
+            <div class="input-group form-group">
+                <input type="text" class="form-control" placeholder="New section name" ng-model="newSection">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" ng-click="addSection()"><i class="fa fa-plus-square"></i> Add</button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="well col-md-10">
+            <h3 class="lead">Notes</h3>
+
+            <div class="form-group">
+                <select ng-model="noteOrder.selectedOrder" ng-options="option.label for option in noteOrder.order track by option.value" ng-change="updateOrder()"> </select>
+            </div>
+
+            <div class="form-group">
+                <tags-input ng-model="tagsFilter" placeholder="Search by tag" add-from-autocomplete-only="true" min-length="2">
+                    <auto-complete source="loadTags($query)"></auto-complete>
+                </tags-input>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="note in notes | filter: filterByTags">
+                    <span class="lead">{{note.text}}</span>
+
+                    <span class="small text-muted">Added at: {{note.addedAt | date: 'HH:mm dd.MM.yyyy'}}</span>
+
+                    <div class="btn-group pull-right">
+                        <button ng-click="sendToTop(note._id)" class="btn btn-default"><i class="fa fa-fw fa-chevron-up"></i> Send to top</button>
+                        <button ng-click="getEditNote(note._id)" class="btn btn-warning"><i class="fa fa-fw fa-pencil"></i> Edit</button>
+                        <button ng-click="removeFromList(note._id)" class="btn btn-danger"><i class="fa fa-fw fa-times-circle"></i> Remove</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+        <!-- Sections -->
+    </div>
+
+</div>
+</body>
+</html>

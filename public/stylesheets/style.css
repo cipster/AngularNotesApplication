@@ -1,0 +1,24 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+
+.note {
+    background-color: #EEE;
+    padding: 5px 20px;
+    width: 80%;
+    border: 1px solid black;
+    margin: 10px;
+}
+
+.note-delete {
+    float: right;
+}
+
+.half-size {
+    width: 50%!important;
+}
